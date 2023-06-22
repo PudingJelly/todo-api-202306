@@ -43,4 +43,7 @@ public class UserService {
         return new UserSignUpResponseDTO(saved);
     }
 
+    public boolean isDuplicate(String email) {
+        return userRepository.existsByEmail(email);
+    }
 }

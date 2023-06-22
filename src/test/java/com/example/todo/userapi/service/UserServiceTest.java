@@ -23,7 +23,7 @@ class UserServiceTest {
     void validateEmailTest()
     {
         //given
-        String email = "abc1234@abc.com";
+        String email = "abc12334@abc.com";
         UserRequestSignUpDTO dto = UserRequestSignUpDTO.builder()
                 .email(email)
                 .password("asdf")
