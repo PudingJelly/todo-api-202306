@@ -67,7 +67,7 @@ public class TodoService {
             throws RuntimeException {
         Optional<Todo> targetEntity = todoRepository.findById(requestDTO.getId());
         targetEntity.ifPresent(entity -> {
-            entity.setDone(requestDTO.isDone());
+            entity.setDone(requestDTO.isDone()); //boolean 타입은 getDone이 아닌 isDone
             //화면단에서 done의 값을 미리 받아 오기 때문에 여기에서 뒤집을 필요가 없음
 
             todoRepository.save(entity);
