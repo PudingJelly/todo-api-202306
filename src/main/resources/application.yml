@@ -21,3 +21,20 @@ logging.level:
 springdoc:
   swagger-ui:
     path: /myapi.html
+
+# Json Web Token key (JWT key)
+jwt:
+  secret: RoJ7P3c3Rh//5wXtd1Qxg32RAWDo9Dxmub7OdpOwhGAzalhptbLfMphX41AIo6OMTZZFckJqnCDWQmwc8ZGiKw==
+
+
+
+
+
+
+
+
+
+
+
+
+
