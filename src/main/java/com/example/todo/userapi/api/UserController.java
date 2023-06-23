@@ -75,7 +75,9 @@ public class UserController {
         try {
             LoginResponseDTO responseDTO
                     = userService.authenticate(dto);
+
             return ResponseEntity.ok().body(responseDTO);
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.badRequest()
