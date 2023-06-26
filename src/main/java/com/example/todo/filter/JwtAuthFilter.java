@@ -81,8 +81,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // 요청 헤더에서 토큰 가져오기
         // http request header
         // -- Content-type : application/json
-        // -- Autorization : Bearer 토큰값
-        String bearerToken = request.getHeader("Autorization");
+        // -- Authorization : Bearer 토큰값
+        String bearerToken = request.getHeader("Authorization");
 
         // 요청 헤더에서 가져온 토큰은 순수 토큰 값이 아닌
         // 앞에 Bearer가 붙어 있으니 이것을 제거하는 작업

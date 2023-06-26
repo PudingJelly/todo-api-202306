@@ -56,7 +56,7 @@ public class TodoService {
 
 
     // 할 일 삭제
-    public TodoListResponseDTO delete(final String todoId) {
+    public TodoListResponseDTO delete(final String todoId, String userId) {
         try {
             todoRepository.deleteById(todoId);
         } catch (Exception e) {
@@ -64,7 +64,7 @@ public class TodoService {
                     "-ID: {}, err: {}", todoId, e.getMessage());
             throw new RuntimeException("id가 존재하지 않아 삭제 실패했습니다.");
         }
-        return retrieve("");
+        return retrieve(userId);
     }
 
 
@@ -84,7 +84,7 @@ public class TodoService {
     }
 
     // 할 일 수정
-    public TodoListResponseDTO update(final TodoModifyRequestDTO requestDTO)
+    public TodoListResponseDTO update(final TodoModifyRequestDTO requestDTO, String userId)
             throws RuntimeException {
         Optional<Todo> targetEntity = todoRepository.findById(requestDTO.getId());
         targetEntity.ifPresent(entity -> {
@@ -93,7 +93,7 @@ public class TodoService {
 
             todoRepository.save(entity);
         });
-        return retrieve("");
+        return retrieve(userId);
     }
 }
 
