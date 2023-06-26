@@ -54,7 +54,6 @@ public class TodoService {
         return user;
     }
 
-
     // 할 일 삭제
     public TodoListResponseDTO delete(final String todoId, String userId) {
         try {

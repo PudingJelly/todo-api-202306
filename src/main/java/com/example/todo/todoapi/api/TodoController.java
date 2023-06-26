@@ -112,6 +112,7 @@ public class TodoController {
             return ResponseEntity.badRequest()
                                 .body(result.getFieldError());
         }
+
         log.info("/api/todos {} request", request.getMethod());
         log.info("modifying dto: {}", requestDTO);
 
