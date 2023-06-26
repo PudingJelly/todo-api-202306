@@ -49,7 +49,7 @@ public class WebSecurityConfig {
         // 토큰 인증 필터 연결
         http.addFilterAfter(
                 jwtAuthFilter,
-                CorsFilter.class // import 주의 : spring거로 가져올것
+                CorsFilter.class // import 주의 : spring으로 가져올것
         );
 
         return http.build();
