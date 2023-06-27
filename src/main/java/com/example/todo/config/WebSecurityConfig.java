@@ -36,7 +36,7 @@ public class WebSecurityConfig {
                 .and()
                 .csrf().disable()
                 .httpBasic().disable()
-                // 세션 인증을 사용하지 않겠다라는 설정
+                // 세션 인증을 사용하지 않겠다라는 설정 (생성하지도 말고 사용도 안하겠다)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
