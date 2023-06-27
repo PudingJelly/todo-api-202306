@@ -1,0 +1,72 @@
+로그인 인증 토큰
+
+vscode
+페이지가 렌더링 됨과 동시에 할 일 목록 요청
+상태status값에 따라 json값을 가져올지 말지 정한다.
+
+headers에 토큰을 첨부해서 인증을 받는다.=로그인을 했다는뜻
+
+토큰과함께 유저의 이름와 role을 로컬스토리지에 저장하고
+로그인하면 홈으로 리다이렉트
+
+페치요청보낼때마다 토큰을 보낸다.--유효성 검사
+
+
+
+inteliJ
+토큰에 인증된 사용자 정보 불러옴
+서비스의 retrive에서 findAllByUser --특정회원의 할일 목록을 가져옴
+먼저 getUser에서 사용자의 정보를 가져와서 retrive에서 보여줌
+
+JwtAuthFilter 클라이언트가 전송한 토큰을 검사한다.
+
+OncePerRequest임포트
+
+토큰생성과 유효성 검증하는 TokenProvider 등록
+ 
+OncePerRequest가 제공하는 추상메서드 doFilterInternal 오버라이딩 해서 작성
+토큰이 넘어오면 parseBearerToken(request)을 통해 헤더를 뽑아 Authorization 를 받는다. bearerToken
+
+Bearer로 시작하면 substring 작업수행 --토큰값 추출
+
+
+그럼이걸 로그인할때 토큰을 주는데
+dto에서 받는 이메일로 회원조회를 한다. user
+ DB비밀번호encodedPassword를 꺼내고 입력한 rawpassword를 인코더로 암호화된걸 비교
+
+로그인을 성공하면 토큰을 부여 JWT부여
+tokenProvider createToken(user)실행-- 토큰부여
+
+
+TokenProvider는 랜덤 문자열을 가지고있다. SECRET_KEY
+yml에서 secret존재 
+
+createToken은 userEntity를 받고 토큰을 리턴
+그리고 서비스에서 유저와 토큰을 리턴하는데 나중에 로컬 스토리지에 저장시킨다. -컨트롤러에서 확인 가능
+
+createToken에서 
+토큰만료시간생성
+토큰생성-json형식
+
+추가 클레임을 통해 정보 발급시간 만료시간 토큰식별아이디를 compact한다 = builder와 유사
+
+다시 필터로 와서 토큰이 존재하면
+이 토큰이 유효한지 확인한다.
+validateaAndGetTokenuserInfo에서 토큰을 넣어서 암호와된Jwts를 파싱을 통해 검사를 한다.
+setSigningKey를 통해 발급당시의 서명을 넣어준다. -시크릿 키를 바이트로 변환함
+비교를 통해 위조된경우 예외 발생
+위조가 되지않으면 페이로드를 리턴
+이걸 클레임 객체에 담음
+
+클레임객체를 통해 토큰을 보낸사람을 알수있다. 
+이것을 TokenUserInfo클래스에 클레임의 정보를 담아서 리턴해준다.
+
+그럼 필터에서 선언된 validateaAndGetTokenuserInfo를 통해 얻은 정보로
+스프링 시큐리티에게 인증정보를 전달해서 전역적으로 앱에서 인증정보를 활용할 수 있게 설정한다.
+
+컨트롤러에서 토큰에 인증된 사용자 정보를 불러오는데 
+필터를 통해 검증되었으므로 쉽게 정보를 가져온다.
+
+필터를 사용하기위해 websecurityconfig에서 SecurityFilterChain선언 --세션 사용안하고, 어떤 요청에서 인증하는지 정해준다.
+그리고 스프링 시큐리티에게 토큰인증 필터 연결 jwtAuthFilter
+
