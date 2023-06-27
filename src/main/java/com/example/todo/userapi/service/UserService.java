@@ -1,18 +1,22 @@
 package com.example.todo.userapi.service;
 
 import com.example.todo.auth.TokenProvider;
+import com.example.todo.auth.TokenUserInfo;
 import com.example.todo.exception.DuplicatedEmailException;
 import com.example.todo.exception.NoRegisteredArgumentsException;
 import com.example.todo.userapi.dto.response.LoginResponseDTO;
 import com.example.todo.userapi.dto.request.LoginRequestDTO;
 import com.example.todo.userapi.dto.request.UserRequestSignUpDTO;
 import com.example.todo.userapi.dto.UserSignUpResponseDTO;
+import com.example.todo.userapi.entity.Role;
 import com.example.todo.userapi.entity.User;
 import com.example.todo.userapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -39,6 +43,7 @@ public class UserService {
             throw new DuplicatedEmailException("중복된 이메일 입니다.");
         }
 
+
         // 패스워드 인코딩
         String encoded = encoder.encode(dto.getPassword());
         dto.setPassword(encoded);
@@ -55,6 +60,7 @@ public class UserService {
         return userRepository.existsByEmail(email);
     }
 
+
     // 회원 인증
     public LoginResponseDTO authenticate(final LoginRequestDTO dto) {
 
@@ -63,6 +69,7 @@ public class UserService {
                 .orElseThrow(
                         () -> new RuntimeException("가입된 회원이 아닙니다!")
                 );
+
 
         // 패스워드 검증
         String rawPassword = dto.getPassword(); // 사용자가 입력한 비번
@@ -80,5 +87,32 @@ public class UserService {
 
         return new LoginResponseDTO(user, token);
 
+    }
+
+
+    // 프리미엄으로 등급업 하는 메서드
+    public LoginResponseDTO promoteToPremium(TokenUserInfo userInfo)
+        throws NoRegisteredArgumentsException, IllegalStateException
+    {
+
+        User foundUser = userRepository
+                .findById(userInfo.getUserId())
+                .orElseThrow(
+                        () -> new NoRegisteredArgumentsException("회원 조회에 실패!")
+                );
+
+        // 일반 회원이 아니면 예외
+        if(userInfo.getRole() != Role.COMMON) {
+            throw new IllegalStateException("일반 회원이 아니면 등급을 상승 시킬 수 없습니다.");
+        }
+
+        // 등급 변경
+        foundUser.changeRole(Role.PREMIUM);
+        User saved = userRepository.save(foundUser);
+
+        // 토큰을 재발급
+        String token = tokenProvider.createToken(saved);
+
+        return new LoginResponseDTO(saved, token);
     }
 }
