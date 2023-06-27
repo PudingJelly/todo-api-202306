@@ -60,7 +60,7 @@ public class TokenProvider {
 
 
         return Jwts.builder()
-                // token headerdㅔ 들어갈 서명
+                // token headerd에 들어갈 서명
                 .signWith(
                         Keys.hmacShaKeyFor(SECRET_KEY.getBytes()),
                         SignatureAlgorithm.HS512
