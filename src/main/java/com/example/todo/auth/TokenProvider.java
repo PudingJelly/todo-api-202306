@@ -65,7 +65,7 @@ public class TokenProvider {
                         Keys.hmacShaKeyFor(SECRET_KEY.getBytes()),
                         SignatureAlgorithm.HS512
                 )
-                // token payload에 들어갈 클레임 생성.
+                // token payload (토큰 정보) 에 들어갈 클레임 생성.
                 .setClaims(claims)
                 .setIssuer("딸기겅듀") // iss: 발급자 정보
                 .setIssuedAt(new Date()) // iat: 발급시간
