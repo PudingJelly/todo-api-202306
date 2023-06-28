@@ -1,0 +1,31 @@
+vs
+헤더에서 upgrade물어보고 promote함수 실행
+promote는 todotemplate에 존재
+fetchpromote실행
+403이면 이미 프리미엄회원으로 판단
+그럼 토큰세팅도 다시한다
+
+
+
+
+intJ
+일반회원 프리미엄 회원으로 승격하는 요청처리
+컨트롤러에서
+@putmapping
+권한검사해서 해당권한이 아니면 인가처리 403리턴
+userService.promoteToPremium
+먼저조회해서 일반회원이 아니면 예외
+
+그러나 이건 스프링 시큐리티에서 인가 처리를 할수있다.
+jwtAuthFilter를 보면 토큰을 받아와서 파싱해서 클레임을 얻어내는데
+여기서 인가정보 리스트를 추가한다. --ROLE_ +userInfo.getRole()
+
+이걸 auth에 추가
+
+그럼 컨트롤러에서  @PreAuthorize hasRole('ROLE_COMMON')을 통해
+확인이 가능하다.
+
+해당되면 service에서 changeRole로 프리미엄으로 만들어주고 
+토큰을 재발급 해준다.
+
+그럼 todo create에서 Role.COMMON인 회원은 글을 5개로 제한한다.
