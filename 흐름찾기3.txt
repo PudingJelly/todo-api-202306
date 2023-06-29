@@ -1,0 +1,58 @@
+프로필 달기
+
+join.js에서 계정생성이라는 그리드밑에 또다른 그리드 추가
+htmlFor는 jsx에서 사용-- 레이블 포
+htmlFor는 input태그의 아이디와 일치해야함.
+onchange로 showThumbnailHandler 실행
+
+showThumbnailHandler 는 첨부된 파일을 썸네일을 뿌린다
+
+사용하기 위해서는 useRef를 사용하는데
+useRef는 요소 참조가 쉽다.
+const $fileTag = useRef
+
+밑에 input 태그에서 ref로 fileTag를 참조선언한다
+
+그러면 함수에서 요소를 취득할수있는 $fileTag.current에서 files[0]--처음들어온 사진선택이 된다.
+그럼 그파일을 읽어서 --reader
+const [imgFile, setImgFile] = useState(null)의 setImgFile에 사진을 넣어 useState를 통해 상태를 변화시킨다.
+
+
+이미지는 src에 imgFile 이거나 require된 이미지를 준다. 
+imgFile이 null일때 require된 이미지꺼냄--useState를 통해 바뀌면 바뀐이미지가 나타남
+
+첨부했음 그걸 백엔드로 넘긴다.
+fetchSignUpPost를 통해 Json을 Blob타입으로 변경후 FormData에 넣음--이미지는 json으로 보낼수 없기 때문에
+
+const userJsonBlob = new Blob(
+            [JSON.stringify(userValue)],
+            {type:'application/json'}
+        );
+
+와 같이 유저의 정보와
+
+const userFormData = new FormData();
+        userFormData.append('user', userJsonBlob); --파라미터 변수명 user
+        userFormData.append('profileImage', $fileTag.current.files[0]);
+
+와 같은 사진의 정보를  FormData형식으로 userFormData에 담아
+
+fetch에서 보낸다--body: userFormData
+
+
+그럼 백엔드에서 signup에서 user라는 @requestPart를 통해 dto를 , MultipartFile 타입의 uploadedFilePath를 받는다
+uploadFilePath에 사용자의 이미지를 저장한다.
+
+service에 선언된 uploadProfileImage함수를 통해 
+디렉토리를 생성하고 파일명을 UUID를 통해 생성하고 파일을 저장한다.
+
+yml에서도 용량의 크기를 정의한다.
+
+그리고 컨트롤러로 다시 돌아와서 유저가 create될때 이미지도 같이 추가되도록한다.
+UserSignUpResponseDTO responseDTO = userService.create(dto, uploadedFilePath);
+
+user엔티티에도 파일의 정보를 저장하는 변수생성했다.
+
+
+
+
