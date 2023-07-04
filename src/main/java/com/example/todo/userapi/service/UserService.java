@@ -2,6 +2,7 @@ package com.example.todo.userapi.service;
 
 import com.example.todo.auth.TokenProvider;
 import com.example.todo.auth.TokenUserInfo;
+import com.example.todo.aws.S3Service;
 import com.example.todo.exception.DuplicatedEmailException;
 import com.example.todo.exception.NoRegisteredArgumentsException;
 import com.example.todo.userapi.dto.response.LoginResponseDTO;
@@ -30,9 +31,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final TokenProvider tokenProvider;
-    @Value("${upload.path}")
-    private String uploadRootPath;
+    private final S3Service s3Service;
 
+//    로컬 경로는 더이상 사용하지 않음
+//    @Value("${upload.path}") //yml에 저장된 경로
+//    private String uploadRootPath;
 
 
     // 회원 가입 처리
@@ -134,23 +137,31 @@ public class UserService {
     public String uploadProfileImage(MultipartFile originalFile) throws IOException {
 
         // 루트 디렉토리가 존재하는지 확인 후, 존재하지 않으면 생성
-        File rootDir = new File(uploadRootPath);
-        if(!rootDir.exists()) rootDir.mkdir();
+//        File rootDir = new File(uploadRootPath);
+//        if(!rootDir.exists()) rootDir.mkdir();
+        // S3에 저장할것이라 이제는 필요 없음
 
         // 파일명을 유니크하게 변경
+        // 사용자가 달라도 파일명은 같을 수 있기에 그대로 감
         String uniqueFileName = UUID.randomUUID()
                 + "_" + originalFile.getOriginalFilename();
 
         // 파일을 저장
-        File uploadFile = new File(uploadRootPath + "/" + uniqueFileName);
-        originalFile.transferTo(uploadFile);
+        // S3에 바로 저장할것이므로 필요없음
+//        File uploadFile = new File(uploadRootPath + "/" + uniqueFileName);
+//        originalFile.transferTo(uploadFile);
 
-        return uniqueFileName;
+        // 파일을 S3 버킷에 저장
+        String uploadUrl
+                = s3Service.uploadToS3Bucket(originalFile.getBytes(), uniqueFileName);
+
+        return uploadUrl;
     }
 
     public String findProfilePath(String userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow();
-        return uploadRootPath + "/" + user.getProfileImg(); // 경로 + 파일명을 리턴
+//        return uploadRootPath + "/" + user.getProfileImg(); // 경로 + 파일명을 리턴
+        return user.getProfileImg();
     }
 }

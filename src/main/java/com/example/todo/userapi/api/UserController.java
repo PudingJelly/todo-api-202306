@@ -72,9 +72,11 @@ public class UserController {
                 log.info("attached file name: {}", profileImg.getOriginalFilename());
                 uploadedFilePath = userService.uploadProfileImage(profileImg);
             }
+
             UserSignUpResponseDTO responseDTO = userService.create(dto, uploadedFilePath);
             return ResponseEntity.ok()
                     .body(responseDTO);
+
         } catch (NoRegisteredArgumentsException e) {
            log.warn("필수 가입 정보를 전달 받지 못했습니다.");
            return ResponseEntity.badRequest()
@@ -170,8 +172,6 @@ public class UserController {
             return ResponseEntity.internalServerError() // 500 에러
                     .body("파일을 찾을 수 없습니다.");
         }
-
-
     }
 
     private MediaType findExtensionAndGetMediaType(String filePath) {
@@ -192,6 +192,24 @@ public class UserController {
                 return null;
         }
     }
+
+    // S3에서 불러온 프로필 사진 처리
+    @GetMapping("/load-s3")
+    public ResponseEntity<?> loadS3(
+            @AuthenticationPrincipal TokenUserInfo userInfo
+    ) {
+        log.info("/api/auth/load-s3 GET - user: {}", userInfo);
+
+        try {
+            String profilePath = userService.findProfilePath(userInfo.getUserId());
+            return ResponseEntity.ok().body(profilePath);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }
 
 
