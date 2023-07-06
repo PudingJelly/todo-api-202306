@@ -30,6 +30,7 @@ import static org.springframework.http.MediaTypeFactory.getMediaType;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/auth")
+@CrossOrigin
 //@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
